@@ -1,0 +1,28 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  gradle:
+    strategy:
+      matrix:
+        os: [ windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: 11
+      - uses: gradle/gradle-build-action@v2
+        name: Build
+        with:
+          arguments: packageMsi
+      - uses: ncipollo/release-action@v1
+        name: Publish
+        with:
+          artifacts: "build/compose/binaries/main/msi/*.msi"
+          token: ${{ secrets.GITHUB_TOKEN }}
