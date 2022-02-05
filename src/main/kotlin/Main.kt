@@ -1,15 +1,16 @@
 // Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import androidx.compose.material.MaterialTheme
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -22,7 +23,6 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
-import javax.naming.Name
 
 /*
 {
@@ -60,15 +60,30 @@ fun App() {
             TextField(text, {
                 text = it
             })
-            LazyColumn {
-                items(items) { item ->
-                    Text(item.Name)
-                    if (item.Icon.isEmpty()) {
-                        UrlImage(url = "https://cdn.discordapp.com/attachments/194678146925199360/939367290196070430/744599448998641675.webp")
-                    } else {
-                        UrlImage(url = "https://xivapi.com${item.Icon}")
+            val stateVertical = rememberScrollState(0)
+            Box(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(stateVertical)
+                ) {
+                    Column {
+                        items.forEach { item ->
+                            Text(item.Name)
+                            if (item.Icon.isEmpty()) {
+                                UrlImage(url = "https://cdn.discordapp.com/attachments/194678146925199360/939367290196070430/744599448998641675.webp")
+                            } else {
+                                UrlImage(url = "https://xivapi.com${item.Icon}")
+                            }
+                        }
                     }
                 }
+                VerticalScrollbar(
+                    rememberScrollbarAdapter(stateVertical),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .fillMaxHeight()
+                )
             }
         }
     }
